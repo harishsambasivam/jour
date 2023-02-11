@@ -1,11 +1,21 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express, { NextFunction, Request, Response } from "express";
-import { userRouter } from "./components/user/user.router";
-import { expect, it } from "vitest";
+import { UserRouter } from "./components/user/user.router";
 
-export const app = express();
+export async function initApp(database: unknown) {
+  const app = express();
 
-app.get("/", (req: Request, res: Response, next: NextFunction) => {
-  res.status(200).send("ok");
-});
+  // middlewares
+  app.use(express.json());
 
-app.use("/user", userRouter);
+  // Routes
+  app.use("/user", UserRouter(database));
+
+  app.get("/", (req: Request, res: Response, next: NextFunction) => {
+    res.status(200).send("ok");
+  });
+
+  return app;
+}
