@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { Database } from "../../types/global";
 
 type membership = "Pro" | "Basic";
 
@@ -8,4 +9,6 @@ const UserSchema = new mongoose.Schema({
   membership: String,
 });
 
-export const User = mongoose.model("User", UserSchema, "users");
+export const UserModel = function (database: Database) {
+  return database.model("User", UserSchema, "users");
+};

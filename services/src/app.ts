@@ -3,8 +3,9 @@ dotenv.config();
 
 import express, { NextFunction, Request, Response } from "express";
 import { UserRouter } from "./components/user/user.router";
+import { Database } from "./types/global";
 
-export async function initApp(database: unknown) {
+export async function initApp(database: Database) {
   const app = express();
 
   // middlewares
