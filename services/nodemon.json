@@ -1,5 +1,9 @@
 {
     "execMap": {
         "ts": "ts-node"
-    }
+    },
+    "watch": [
+        "src",
+        ".env"
+      ]
 }
