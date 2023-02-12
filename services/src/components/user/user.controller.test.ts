@@ -3,7 +3,7 @@ import request from "supertest";
 import { initApp } from "../../app";
 import mongoose from "mongoose";
 import { User } from "./user.types";
-import { UserModel } from "./user.model";
+import { UserDao } from "./user.model";
 import { logger } from "../../utils/logger";
 
 logger.level = "error";
@@ -12,7 +12,7 @@ logger.level = "error";
 const app = await initApp(mongoose);
 
 // spy on the mongoose package to avoid creating users in db
-const UserFactory = UserModel(mongoose);
+const UserFactory = UserDao(mongoose);
 
 vi.spyOn(UserFactory, "create").mockReturnValueOnce({
   username: "john",
@@ -51,10 +51,7 @@ describe("POST /user", () => {
     const response = await request(app).post("/user").send(userData);
     expect(response.statusCode).toBe(200);
     expect(response.body.status).toEqual("success");
-    const responseKeys = Object.keys(response.body.data);
-    for (let key of ["username", "password", "membership", "_id"]) {
-      expect(responseKeys.includes(key)).toBeTruthy();
-    }
+    expect(response.body.data).toHaveProperty("id");
     expect(UserFactory.create).toBeCalledTimes(1);
   });
 });

@@ -1,45 +1,50 @@
-import { Model } from "mongoose";
-import { getUser } from "../user/user.controller";
-import { AuthTokens } from "./auth.types";
-import jwt from "jsonwebtoken";
-import { User } from "../user/user.types";
-import { logger } from "../../utils/logger";
+import { NextFunction, Request, Response, Router } from "express";
+import { Database } from "../../types/global";
+import { AuthTokens, IAuthService } from "./auth.types";
+import { UserDao } from "../user/user.model";
+import { IUserDAO, User } from "../user/user.types";
+import { AuthService } from "./auth.service";
+import { UserService } from "../user/user.service";
+const router = Router();
 
-const {
-  ACCESS_TOKEN_SECRET: accessTokenSecret,
-  REFRESH_TOKEN_SECRET: refreshTokenSecret,
-  ACCESS_TOKEN_TTL: accessTokenTtl,
-  REFRESH_TOKEN_TTL: refreshTokenTtl,
-} = process.env;
+export function AuthController(database: Database) {
+  // dependency injection of user service and user data access layer
+  const userDao: IUserDAO = UserDao(database);
+  const { refreshTokens, generateTokens }: IAuthService = AuthService(
+    UserService(userDao)
+  );
 
-export function generateTokens(user: User) {
-  const accessToken = jwt.sign(user, accessTokenSecret as string, {
-    expiresIn: accessTokenTtl,
-  });
-  const refreshToken = jwt.sign(user, refreshTokenSecret as string, {
-    expiresIn: refreshTokenTtl,
-  });
+  router.post(
+    "/refresh",
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const { refreshToken } = req.body;
+        const tokens: AuthTokens = await refreshTokens(refreshToken);
+        res.status(200).json({
+          status: "success",
+          data: tokens,
+        });
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
 
-  const tokens = {
-    accessToken: accessToken,
-    refreshToken: refreshToken,
-  };
+  router.post(
+    "/login",
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const user: User = req.body;
+        const data: AuthTokens = generateTokens(user);
+        res.status(200).json({
+          status: "success",
+          data,
+        });
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
 
-  logger.trace({ tokens });
-  return tokens;
-}
-
-export async function refreshTokens(
-  UserModel: Model<any>,
-  token: string
-): Promise<AuthTokens> {
-  logger.trace({ token }, "invoking refresh tokens");
-  // @ts-ignore
-  const { id: userId } = jwt.verify(token, refreshTokenSecret as string);
-  const user: User = await getUser(UserModel, userId);
-  const { accessToken, refreshToken } = generateTokens(user);
-  return {
-    accessToken,
-    refreshToken,
-  };
+  return router;
 }
