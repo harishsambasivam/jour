@@ -1,6 +1,3 @@
-import dotenv from "dotenv";
-dotenv.config();
-
 import express, { NextFunction, Request, Response } from "express";
 import { UserRouter } from "./components/user/user.router";
 import { Database } from "./types/global";

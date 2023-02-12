@@ -1,7 +1,10 @@
+import { Model } from "mongoose";
 import { User } from "../user/user.types";
-import { generateTokens } from "./auth.controller";
+import AuthController from "./auth.controller";
 import { AuthTokens } from "./auth.types";
 import { describe, expect, it, vi } from "vitest";
+
+const { generateTokens } = AuthController(Model);
 
 describe("generate tokens", () => {
   it("should generate tokens given user payload", () => {
