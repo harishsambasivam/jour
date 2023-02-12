@@ -5,7 +5,7 @@ export type AuthTokens = {
   refreshToken: string;
 };
 
-export type AuthService = {
+export interface IAuthService {
   generateTokens: (user: User) => AuthTokens;
   refreshTokens: (token: string) => Promise<AuthTokens>;
-};
+}

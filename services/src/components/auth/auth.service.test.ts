@@ -1,10 +1,14 @@
-import { Model } from "mongoose";
-import { User } from "../user/user.types";
-import AuthService from "./auth.service";
+import mongoose from "mongoose";
+import { UserDao } from "../user/user.model";
+import { IUserDAO, User } from "../user/user.types";
+import { AuthService } from "./auth.service";
 import { AuthTokens } from "./auth.types";
 import { describe, expect, it, vi } from "vitest";
+import { UserService } from "../user/user.service";
 
-const { generateTokens } = AuthService(Model);
+// dependency injecting user service to auth service
+const userDao: IUserDAO = UserDao(mongoose);
+const { generateTokens } = AuthService(UserService(userDao));
 
 describe("generate tokens", () => {
   it("should generate tokens given user payload", () => {

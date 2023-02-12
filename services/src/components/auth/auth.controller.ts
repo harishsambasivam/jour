@@ -1,15 +1,19 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { Database } from "../../types/global";
-import { AuthTokens } from "./auth.types";
-import { UserModel } from "../user/user.model";
-import { User } from "../user/user.types";
-import AuthService from "./auth.service";
+import { AuthTokens, IAuthService } from "./auth.types";
+import { UserDao } from "../user/user.model";
+import { IUserDAO, User } from "../user/user.types";
+import { AuthService } from "./auth.service";
 import { UserService } from "../user/user.service";
 const router = Router();
 
 export function AuthController(database: Database) {
-  const model = UserModel(database);
-  const { refreshTokens, generateTokens } = AuthService(UserService(model));
+  // dependency injection of user service and user data access layer
+  const userDao: IUserDAO = UserDao(database);
+  const { refreshTokens, generateTokens }: IAuthService = AuthService(
+    UserService(userDao)
+  );
+
   router.post(
     "/refresh",
     async (req: Request, res: Response, next: NextFunction) => {

@@ -1,13 +1,15 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { Database } from "../../types/global";
-import { UserModel } from "./user.model";
-import { User } from "./user.types";
+import { UserDao } from "./user.model";
+import { IUserDAO, IUserService, User } from "./user.types";
 import { UserService } from "./user.service";
 
 export const UserController = function (database: Database) {
   const router = Router();
-  const model = UserModel(database);
-  const { getUser, addUser } = UserService(model);
+
+  // dependency injection of user service and data access layer
+  const userDao: IUserDAO = UserDao(database);
+  const { getUser, addUser }: IUserService = UserService(userDao);
 
   router.get(
     "/:id",

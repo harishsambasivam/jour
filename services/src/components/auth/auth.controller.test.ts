@@ -4,17 +4,17 @@ import { describe, expect, it, vi } from "vitest";
 import { initApp } from "../../app";
 import mongoose from "mongoose";
 import { User } from "../user/user.types";
-import { UserModel } from "../user/user.model";
+import { UserDao } from "../user/user.model";
 
 const app = await initApp(mongoose);
 
 // #FIXME: https://github.com/auth0/node-jsonwebtoken/pull/876
 // vi.spyOn(jwt, "decode").mockReturnValueOnce({} as any);
 
-const UserFactory = UserModel(mongoose);
+const userDao = UserDao(mongoose);
 
 // #FIXME: how this spys
-vi.spyOn(UserFactory, "findById").mockReturnValueOnce({
+vi.spyOn(userDao, "findById").mockReturnValueOnce({
   username: "john",
   password: "password",
   membership: "Basic",

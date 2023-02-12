@@ -3,7 +3,7 @@ import request from "supertest";
 import { initApp } from "../../app";
 import mongoose from "mongoose";
 import { User } from "./user.types";
-import { UserModel } from "./user.model";
+import { UserDao } from "./user.model";
 import { logger } from "../../utils/logger";
 
 logger.level = "error";
@@ -12,7 +12,7 @@ logger.level = "error";
 const app = await initApp(mongoose);
 
 // spy on the mongoose package to avoid creating users in db
-const UserFactory = UserModel(mongoose);
+const UserFactory = UserDao(mongoose);
 
 vi.spyOn(UserFactory, "create").mockReturnValueOnce({
   username: "john",

@@ -4,7 +4,7 @@ import { IUserService, User } from "../user/user.types";
 import { logger } from "../../utils/logger";
 import { getEnv } from "../../config/env";
 
-export default function AuthService(UserService: IUserService): IAuthService {
+export function AuthService(UserService: IUserService): IAuthService {
   function generateTokens(user: User) {
     const accessToken = jwt.sign(user, getEnv("accessTokenSecret"), {
       expiresIn: getEnv("accessTokenTtl"),

@@ -1,14 +1,13 @@
 import { logger } from "../../utils/logger";
-import { Model } from "mongoose";
-import { IUserService, User } from "./user.types";
+import { IUserDAO, IUserService, User } from "./user.types";
 
-export function UserService(User: Model<any>): IUserService {
+export function UserService(User: IUserDAO): IUserService {
   const addUser = async (user: User) => {
     logger.debug(user, "invoking add user");
     const response = await User.create(user);
     logger.debug({ response });
     return {
-      id: response["_id"],
+      id: response["_id"].toString(),
     };
   };
 
