@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
-import { UserRouter } from "./components/user/user.router";
+import { UserController as UserContoller } from "./components/user/user.controller";
 import { Database } from "./types/global";
-import { AuthRouter } from "./components/auth/auth.route";
+import { AuthController } from "./components/auth/auth.controller";
 import { logger } from "./utils/logger";
 
 export async function initApp(database: Database) {
@@ -11,8 +11,8 @@ export async function initApp(database: Database) {
   app.use(express.json());
 
   // Routes
-  app.use("/user", UserRouter(database));
-  app.use("/auth", AuthRouter(database));
+  app.use("/user", UserContoller(database));
+  app.use("/auth", AuthController(database));
 
   app.get("/", (req: Request, res: Response, next: NextFunction) => {
     res.status(200).send("ok");

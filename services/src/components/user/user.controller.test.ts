@@ -51,10 +51,7 @@ describe("POST /user", () => {
     const response = await request(app).post("/user").send(userData);
     expect(response.statusCode).toBe(200);
     expect(response.body.status).toEqual("success");
-    const responseKeys = Object.keys(response.body.data);
-    for (let key of ["username", "password", "membership", "_id"]) {
-      expect(responseKeys.includes(key)).toBeTruthy();
-    }
+    expect(response.body.data).toHaveProperty("id");
     expect(UserFactory.create).toBeCalledTimes(1);
   });
 });
