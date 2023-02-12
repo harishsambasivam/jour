@@ -1,12 +1,17 @@
-import { ChangeEvent, useState } from "react";
-import Button from "../Components/Button/Button";
-import Input from "../Components/Input/Input";
-import Label from "../Components/Label/Label";
-import CopyRight from "../Components/CopyRight/CopyRight";
+import Button from "../components/Button/Button";
+import Input from "../components/Input/Input";
+import Label from "../components/Label/Label";
+import CopyRight from "../components/CopyRight/CopyRight";
 import { Link } from "react-router-dom";
 import { Formik, Form, ErrorMessage } from "formik";
 import { object, string, ref } from "yup";
-import ErrorText from "../Components/ErrorText/ErrorText";
+import ErrorText from "../components/ErrorText/ErrorText";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { getEnv } from "../config/env";
+import { logger } from "../utils/logger";
+import { useContext, useEffect } from "react";
+import AuthContext from "../context/AuthContext";
 
 let userSchema = object({
   username: string()
@@ -21,17 +26,31 @@ let userSchema = object({
   ),
 });
 
-const initialValues = {
-  username: "",
-  password: "",
-  confirmPassword: "",
-};
-
-const onSubmit = (e: any) => {
-  console.log(e);
-};
-
 const SignUp = () => {
+  const navigate = useNavigate();
+  const { authenticated, setAuthenticated } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (authenticated) {
+      navigate("/");
+    }
+  }, []);
+
+  const initialValues = {
+    username: "",
+    password: "",
+    confirmPassword: "",
+  };
+
+  const onSubmit = async (userData: any) => {
+    const res = await axios.post(`${getEnv("serverUri")}/user`, userData);
+    logger.info(res);
+    const { data: body } = res;
+    if (body.status === "success") {
+      navigate("/signin");
+    }
+  };
+
   return (
     <div className="w-full max-w-xs">
       <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">

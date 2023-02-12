@@ -1,12 +1,17 @@
-import { ChangeEvent, useState } from "react";
-import Button from "../Components/Button/Button";
-import Input from "../Components/Input/Input";
-import Label from "../Components/Label/Label";
-import CopyRight from "../Components/CopyRight/CopyRight";
-import { Link } from "react-router-dom";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
+import Button from "../components/Button/Button";
+import Input from "../components/Input/Input";
+import Label from "../components/Label/Label";
+import CopyRight from "../components/CopyRight/CopyRight";
+import { Link, useNavigate } from "react-router-dom";
 import { ErrorMessage, Form, Formik } from "formik";
 import { object, string } from "yup";
-import ErrorText from "../Components/ErrorText/ErrorText";
+import ErrorText from "../components/ErrorText/ErrorText";
+import axios from "axios";
+import { getEnv } from "../config/env";
+import { logger } from "../utils/logger";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import AuthContext from "../context/AuthContext";
 
 let userSchema = object({
   username: string()
@@ -17,16 +22,35 @@ let userSchema = object({
     .required("please choose a password"),
 });
 
-const initialValues = {
-  username: "",
-  password: "",
-};
-
-const onSubmit = (e: any) => {
-  console.log(e);
-};
-
 const SignIn = () => {
+  const navigate = useNavigate();
+  const [accessToken, setAccessToken] = useLocalStorage("accessToken", "");
+  const [refreshToken, setRefreshToken] = useLocalStorage("refreshToken", "");
+  const { authenticated, setAuthenticated } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (authenticated) {
+      navigate("/");
+    }
+  }, []);
+
+  const initialValues = {
+    username: "",
+    password: "",
+  };
+
+  const onSubmit = async (userData: any) => {
+    const res = await axios.post(`${getEnv("serverUri")}/auth/login`, userData);
+    logger.info(res);
+    const { data: body } = res;
+    if (body.status === "success") {
+      setAccessToken(body.data.accessToken);
+      setRefreshToken(body.data.refreshToken);
+      setAuthenticated(true);
+      navigate("/");
+    }
+  };
+
   return (
     <div className="w-full max-w-xs">
       <Formik
