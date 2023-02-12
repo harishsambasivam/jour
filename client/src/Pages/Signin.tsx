@@ -4,60 +4,59 @@ import Input from "../Components/Input/Input";
 import Label from "../Components/Label/Label";
 import CopyRight from "../Components/CopyRight/CopyRight";
 import { Link } from "react-router-dom";
+import { ErrorMessage, Form, Formik } from "formik";
+import { object, string } from "yup";
+import ErrorText from "../Components/ErrorText/ErrorText";
 
-interface SignInForm {
-  username: string;
-  password: string;
-}
+let userSchema = object({
+  username: string()
+    .min(3, "must be at least 3 characters long")
+    .required("please choose a username"),
+  password: string()
+    .min(3, "must be at least 3 characters long")
+    .required("please choose a password"),
+});
+
+const initialValues = {
+  username: "",
+  password: "",
+};
+
+const onSubmit = (e: any) => {
+  console.log(e);
+};
 
 const SignIn = () => {
-  const initialState: SignInForm = {
-    username: "",
-    password: "",
-  };
-  const [formData, setFormData] = useState<SignInForm>(initialState);
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log(e);
-  };
-
-  const handleClick = () => {
-    console.log("clicked");
-  };
-
   return (
     <div className="w-full max-w-xs">
-      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <div className="mb-4">
-          <Label htmlFor="username">Username</Label>
-          <Input
-            type="text"
-            placeholder="Username"
-            name="username"
-            value={formData.username}
-            changeHandler={handleChange}
-          />
-        </div>
-        <div className="mb-6">
-          <Label htmlFor="password">Password</Label>
-          <Input
-            type="password"
-            placeholder="*******"
-            name="password"
-            value={formData.password}
-            changeHandler={handleChange}
-          />
-        </div>
-        <div className="flex items-center justify-between">
-          <Button clickHandler={handleClick}>Sign In</Button>
-          <a
-            className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-            href="#"
-          >
-            Forgot Password?
-          </a>
-        </div>
-      </div>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={onSubmit}
+        validationSchema={userSchema}
+        validateOnChange={false}
+      >
+        <Form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+          <div className="mb-4">
+            <Label htmlFor="username">Username</Label>
+            <Input placeholder="Username" name="username" />
+            <ErrorMessage name="username" component={ErrorText} />
+          </div>
+          <div className="mb-6">
+            <Label htmlFor="password">Password</Label>
+            <Input placeholder="*******" name="password" type="password" />
+            <ErrorMessage name="password" component={ErrorText} />
+          </div>
+          <div className="flex items-center justify-between">
+            <Button type="submit">Sign In</Button>
+            <a
+              className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
+              href="#"
+            >
+              Forgot Password?
+            </a>
+          </div>
+        </Form>
+      </Formik>
 
       <p className="text-center text-gray-500 text-xs">
         Already a jour user, please
