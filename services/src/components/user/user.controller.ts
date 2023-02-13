@@ -9,7 +9,8 @@ export const UserController = function (database: Database) {
 
   // dependency injection of user service and data access layer
   const userDao: IUserDAO = UserDao(database);
-  const { getUser, addUser }: IUserService = UserService(userDao);
+  const userService: IUserService = UserService(userDao);
+  const { getUser, addUser } = userService;
 
   router.get(
     "/:id",

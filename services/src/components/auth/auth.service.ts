@@ -5,7 +5,22 @@ import { logger } from "../../utils/logger";
 import { getEnv } from "../../config/env";
 
 export function AuthService(UserService: IUserService): IAuthService {
+  async function refreshTokens(token: string): Promise<AuthTokens> {
+    logger.trace({ token }, "invoking refresh tokens");
+    // @ts-ignore
+    const { id: userId } = jwt.verify(token, getEnv("refreshTokenSecret"));
+    const user: User = await UserService.getUser(userId);
+    const { accessToken, refreshToken } = generateTokens(user);
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
+
   function generateTokens(user: User) {
+    // #FIXME: performance improvement
+    delete user.password;
+
     const accessToken = jwt.sign(user, getEnv("accessTokenSecret"), {
       expiresIn: getEnv("accessTokenTtl"),
     });
@@ -22,17 +37,20 @@ export function AuthService(UserService: IUserService): IAuthService {
     return tokens;
   }
 
-  async function refreshTokens(token: string): Promise<AuthTokens> {
-    logger.trace({ token }, "invoking refresh tokens");
-    // @ts-ignore
-    const { id: userId } = jwt.verify(token, getEnv("refreshTokenSecret"));
-    const user: User = await UserService.getUser(userId);
-    const { accessToken, refreshToken } = generateTokens(user);
-    return {
-      accessToken,
-      refreshToken,
-    };
+  function verifyAccessToken(accessToken: string): boolean {
+    try {
+      var decoded = jwt.verify(accessToken, getEnv("accessTokenSecret"));
+      logger.trace(decoded);
+      return true;
+    } catch (err) {
+      logger.error(err);
+      return false;
+    }
   }
 
-  return { generateTokens, refreshTokens };
+  function verifyRefreshToken(accessToken: string): boolean {
+    return true;
+  }
+
+  return { generateTokens, refreshTokens, verifyAccessToken };
 }

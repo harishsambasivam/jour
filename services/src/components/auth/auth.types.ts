@@ -8,4 +8,5 @@ export type AuthTokens = {
 export interface IAuthService {
   generateTokens: (user: User) => AuthTokens;
   refreshTokens: (token: string) => Promise<AuthTokens>;
+  verifyAccessToken: (accessToken: string) => boolean;
 }

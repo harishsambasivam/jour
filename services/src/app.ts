@@ -1,3 +1,4 @@
+import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import { UserController as UserContoller } from "./components/user/user.controller";
 import { Database } from "./types/global";
@@ -8,6 +9,7 @@ export async function initApp(database: Database) {
   const app = express();
 
   // middlewares
+  app.use(cors());
   app.use(express.json());
 
   // Routes
