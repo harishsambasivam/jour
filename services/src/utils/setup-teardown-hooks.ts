@@ -2,7 +2,7 @@ import { afterAll, beforeAll } from "vitest";
 import { logger } from "./logger";
 
 beforeAll(() => {
-  logger.level = "error";
+  logger.level = "debug";
 });
 
 afterAll(() => {

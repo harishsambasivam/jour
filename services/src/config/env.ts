@@ -11,6 +11,7 @@ const env = {
   refreshTokenTtl: process.env.REFRESH_TOKEN_TTL,
   logLevel: process.env.LOG_LEVEL,
   env: process.env.NODE_ENV,
+  saltRounds: process.env.SALT_ROUNDS,
 };
 
 export function getEnv(key: keyof typeof env): string {
