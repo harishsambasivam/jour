@@ -9,7 +9,7 @@ export type User = {
 
 export interface IUserService {
   getUserById: (id: string) => Promise<any>;
-  getUserByName: (username: string) => Promise<any>;
+  getUserByCreds: (username: string, password: string) => Promise<any>;
   addUser: (user: User) => Promise<{ id: string }>;
   hashPassword: (password: string) => Promise<string>;
 }

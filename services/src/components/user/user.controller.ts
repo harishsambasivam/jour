@@ -11,7 +11,7 @@ export const UserController = function (database: Database) {
   // dependency injection of user service and data access layer
   const userDao: IUserDAO = UserDao(database);
   const userService: IUserService = UserService(userDao);
-  const { getUserByName, getUserById, addUser } = userService;
+  const { getUserByCreds, getUserById, addUser } = userService;
 
   router.get(
     "/:id",
@@ -33,8 +33,8 @@ export const UserController = function (database: Database) {
     "/name/:name",
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const { username } = req.params;
-        const userData = await getUserByName(username);
+        const { username, password } = req.params;
+        const userData = await getUserByCreds(username, password);
         logger.debug(userData);
         res.status(200).send({
           status: "success",

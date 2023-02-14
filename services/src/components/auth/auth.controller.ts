@@ -5,6 +5,7 @@ import { UserDao } from "../user/user.model";
 import { IUserDAO, User } from "../user/user.types";
 import { AuthService } from "./auth.service";
 import { UserService } from "../user/user.service";
+import { logger } from "../../utils/logger";
 const router = Router();
 
 export function AuthController(database: Database) {
@@ -14,7 +15,7 @@ export function AuthController(database: Database) {
     UserService(userDao)
   );
 
-  const { getUserByName } = UserService(userDao);
+  const { getUserByCreds } = UserService(userDao);
 
   router.post(
     "/refresh",
@@ -36,8 +37,14 @@ export function AuthController(database: Database) {
     "/login",
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const creds: User = req.body;
-        const user: User = await getUserByName(creds.username);
+        const { username, password }: User = req.body;
+        const user: User = await getUserByCreds(username, password!);
+        logger.debug(user);
+        if (!user)
+          return res.status(401).json({
+            status: "error",
+            data: "invalid login creds",
+          });
         const data: AuthTokens = generateTokens(user);
         res.status(200).json({
           status: "success",
