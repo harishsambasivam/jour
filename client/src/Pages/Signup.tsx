@@ -102,7 +102,6 @@ const SignUp = () => {
           sign in here
         </Link>
       </p>
-      <CopyRight />
     </div>
   );
 };

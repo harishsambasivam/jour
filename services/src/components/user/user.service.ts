@@ -28,12 +28,22 @@ export function UserService(User: IUserDAO): IUserService {
     };
   };
 
-  const getUser = async (userId: string) => {
-    logger.debug({ userId }, "invoking add user");
+  const getUserById = async (userId: string) => {
+    logger.debug({ userId }, "invoking get user by ID");
     const response = await User.findById(userId);
     logger.debug({ response });
     return response;
   };
 
-  return { addUser, getUser, hashPassword };
+  const getUserByCreds = async (userName: string, password: string) => {
+    logger.debug({ userName }, "invoking get user by name");
+    const response = await User.findOne({
+      username: userName,
+      password: password,
+    });
+    logger.debug({ response });
+    return response.toObject();
+  };
+
+  return { addUser, getUserById, getUserByCreds, hashPassword };
 }

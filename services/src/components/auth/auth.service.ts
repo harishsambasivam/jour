@@ -9,7 +9,7 @@ export function AuthService(UserService: IUserService): IAuthService {
     logger.trace({ token }, "invoking refresh tokens");
     // @ts-ignore
     const { id: userId } = jwt.verify(token, getEnv("refreshTokenSecret"));
-    const user: User = await UserService.getUser(userId);
+    const user: User = await UserService.getUserById(userId);
     const { accessToken, refreshToken } = generateTokens(user);
     return {
       accessToken,

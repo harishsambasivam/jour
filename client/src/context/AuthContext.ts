@@ -2,7 +2,7 @@ import { createContext } from "react";
 
 const AuthContext = createContext({
   authenticated: false,
-  setAuthenticated: (auth: any) => {},
+  setAuthenticated: (auth: boolean) => {},
 });
 
 export default AuthContext;
