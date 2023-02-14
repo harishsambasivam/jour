@@ -1,5 +1,5 @@
 import cors from "cors";
-import express, { NextFunction, Request, Response } from "express";
+import express, { NextFunction, Request, Response, Router } from "express";
 import { UserController as UserContoller } from "./components/user/user.controller";
 import { Database } from "./types/global";
 import { AuthController } from "./components/auth/auth.controller";
@@ -13,7 +13,11 @@ export async function initApp(database: Database) {
   app.use(express.json());
 
   // Routes
-  app.use("/user", UserContoller(database));
+  app.use("/user", new UserContoller(database).router);
+  app.use((req, res, next) => {
+    logger.debug("%%%%");
+    next();
+  });
   app.use("/auth", AuthController(database));
 
   app.get("/", (req: Request, res: Response, next: NextFunction) => {

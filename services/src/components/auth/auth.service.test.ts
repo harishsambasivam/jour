@@ -8,7 +8,7 @@ import { UserService } from "../user/user.service";
 
 // dependency injecting user service to auth service
 const userDao: IUserDAO = UserDao(mongoose);
-const { generateTokens } = AuthService(UserService(userDao));
+const { generateTokens } = AuthService(new UserService(userDao));
 
 describe("generate tokens", () => {
   it("should generate tokens given user payload", () => {

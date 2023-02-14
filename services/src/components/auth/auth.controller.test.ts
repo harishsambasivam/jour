@@ -15,10 +15,21 @@ const userDao = UserDao(mongoose);
 
 // #FIXME: how this spys
 vi.spyOn(userDao, "findById").mockReturnValueOnce({
-  username: "john",
-  password: "password",
-  membership: "Basic",
-  _id: "63e7b518579984522632a8bc",
+  toObject: () => ({
+    username: "john",
+    password: "password",
+    membership: "Basic",
+    _id: "63e7b518579984522632a8bc",
+  }),
+} as any);
+
+vi.spyOn(userDao, "findOne").mockReturnValueOnce({
+  toObject: () => ({
+    username: "john",
+    password: "password",
+    membership: "Basic",
+    _id: "63e7b518579984522632a8bc",
+  }),
 } as any);
 
 // describe("POST /auth/refresh", () => {

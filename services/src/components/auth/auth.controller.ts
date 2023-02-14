@@ -11,11 +11,9 @@ const router = Router();
 export function AuthController(database: Database) {
   // dependency injection of user service and user data access layer
   const userDao: IUserDAO = UserDao(database);
-  const { refreshTokens, generateTokens }: IAuthService = AuthService(
-    UserService(userDao)
-  );
-
-  const { getUserByCreds } = UserService(userDao);
+  const userService = new UserService(userDao);
+  const { refreshTokens, generateTokens }: IAuthService =
+    AuthService(userService);
 
   router.post(
     "/refresh",
@@ -37,8 +35,12 @@ export function AuthController(database: Database) {
     "/login",
     async (req: Request, res: Response, next: NextFunction) => {
       try {
+        logger.debug("/auth/loging invoking controller");
         const { username, password }: User = req.body;
-        const user: User = await getUserByCreds(username, password!);
+        const user: User = await userService.getUserByCreds(
+          username,
+          password!
+        );
         logger.debug(user);
         if (!user)
           return res.status(401).json({

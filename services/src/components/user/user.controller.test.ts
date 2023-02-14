@@ -22,11 +22,15 @@ vi.spyOn(UserFactory, "create").mockReturnValueOnce({
 } as any);
 
 vi.spyOn(UserFactory, "findById").mockReturnValueOnce({
-  username: "john",
-  password: "password",
-  membership: "Basic",
-  _id: "63e7b518579984522632a8bc",
+  toObject: () => ({
+    username: "john",
+    password: "password",
+    membership: "Basic",
+    _id: "63e7b518579984522632a8bc",
+  }),
 } as any);
+
+// #TODO: test for /user/name
 
 describe("GET /user/:id", () => {
   it("should respond with a 200 status code", async () => {
