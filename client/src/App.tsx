@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "./Pages/Home";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 import SignUp from "./Pages/Signup";
 import SignIn from "./Pages/Signin";
 import AuthContext from "./context/AuthContext";
@@ -16,8 +16,16 @@ function App() {
     getInitialAuthState(refreshToken) || false
   );
 
+  const AuthState = useMemo(
+    () => ({
+      authenticated,
+      setAuthenticated,
+    }),
+    [authenticated, setAuthenticated]
+  );
+
   return (
-    <AuthContext.Provider value={{ authenticated, setAuthenticated }}>
+    <AuthContext.Provider value={AuthState}>
       <div className="container w-screen h-screen mx-auto p-4 flex flex-col justify-center items-center">
         <Routes>
           <Route path="/" element={<Home />} />
