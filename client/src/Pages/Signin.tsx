@@ -2,7 +2,6 @@ import { ChangeEvent, useContext, useEffect, useState } from "react";
 import Button from "../components/Button/Button";
 import Input from "../components/Input/Input";
 import Label from "../components/Label/Label";
-import CopyRight from "../components/CopyRight/CopyRight";
 import { Link, useNavigate } from "react-router-dom";
 import { ErrorMessage, Form, Formik } from "formik";
 import { object, string } from "yup";
@@ -91,7 +90,6 @@ const SignIn = () => {
           sign up here
         </Link>
       </p>
-      <CopyRight />
     </div>
   );
 };

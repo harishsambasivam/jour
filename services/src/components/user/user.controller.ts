@@ -3,6 +3,7 @@ import { Database } from "../../types/global";
 import { UserDao } from "./user.model";
 import { IUserDAO, IUserService, User } from "./user.types";
 import { UserService } from "./user.service";
+import { logger } from "../../utils/logger";
 
 export const UserController = function (database: Database) {
   const router = Router();
@@ -10,17 +11,34 @@ export const UserController = function (database: Database) {
   // dependency injection of user service and data access layer
   const userDao: IUserDAO = UserDao(database);
   const userService: IUserService = UserService(userDao);
-  const { getUser, addUser } = userService;
+  const { getUserByName, getUserById, addUser } = userService;
 
   router.get(
     "/:id",
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const { id: userId } = req.params;
-        const userData = await getUser(userId);
+        const userData = await getUserById(userId);
         res.status(200).send({
           status: "success",
           data: userData,
+        });
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
+
+  router.get(
+    "/name/:name",
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const { username } = req.params;
+        const userData = await getUserByName(username);
+        logger.debug(userData);
+        res.status(200).send({
+          status: "success",
+          data: userData ? userData : null,
         });
       } catch (err) {
         next(err);

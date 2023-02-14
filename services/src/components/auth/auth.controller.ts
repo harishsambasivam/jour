@@ -14,6 +14,8 @@ export function AuthController(database: Database) {
     UserService(userDao)
   );
 
+  const { getUserByName } = UserService(userDao);
+
   router.post(
     "/refresh",
     async (req: Request, res: Response, next: NextFunction) => {
@@ -34,7 +36,8 @@ export function AuthController(database: Database) {
     "/login",
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const user: User = req.body;
+        const creds: User = req.body;
+        const user: User = await getUserByName(creds.username);
         const data: AuthTokens = generateTokens(user);
         res.status(200).json({
           status: "success",
