@@ -19,16 +19,16 @@ function App() {
     getInitialAuthState(refreshToken) || false
   );
 
-  const AuthState = useMemo(
-    () => ({
-      authenticated,
-      setAuthenticated,
-    }),
-    [authenticated, setAuthenticated]
-  );
+  // const AuthState = useMemo(
+  //   () => ({
+  //     authenticated,
+  //     setAuthenticated,
+  //   }),
+  //   [authenticated, setAuthenticated]
+  // );
 
   return (
-    <AuthContext.Provider value={AuthState}>
+    <AuthContext.Provider value={{ authenticated, setAuthenticated }}>
       <Routes>
         <Route element={<FullLayout />}>
           <Route path="signin" element={<SignIn />} />

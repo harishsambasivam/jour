@@ -5,6 +5,7 @@ import BottomNav from "../components/BottomNav/BottomNav";
 
 const Home = () => {
   const { authenticated } = useContext(AuthContext);
+  console.log(authenticated);
   return (
     <div>{authenticated ? "Home" : <Navigate to="/signin" replace />}</div>
   );
