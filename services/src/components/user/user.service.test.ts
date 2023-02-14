@@ -5,7 +5,7 @@ import { IUserDAO, IUserService } from "./user.types";
 import { UserService } from "./user.service";
 
 const userDao: IUserDAO = UserDao(mongoose);
-const userService: IUserService = UserService(userDao);
+const userService: IUserService = new UserService(userDao);
 const { hashPassword } = userService;
 
 describe("Hash Password", () => {
